@@ -1,9 +1,10 @@
 # glacier-mass-balance
 
 # Overview
+The folling .py files are used to conduct a total mass balance and climate mass balance for any given glacier. Additionally, an altitudinally-resolved method for estimating mass balance is show. Together, these files are used to apply appropriate raster file geoprocessing and calculations. The last two files in this list are used to aid in raster file smoothing/data filtering and in effectively plotting solutions.
 
 ## 1. massBalanceOOP.py
-This is the driver
+This is the primary file and driver
 
 * Initialized glaciers: selecting calculation parameters and defining appropriate raster files
 * Calling methods to manipulate and calculate based on selected glacier
