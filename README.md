@@ -3,7 +3,7 @@
 # Overview
 The following .py files are used to conduct a total mass balance and climate mass balance for any given glacier. Additionally, an altitudinally-resolved method for estimating mass balance is show. Together, these files are used to apply appropriate raster file geoprocessing and calculations. The last two files in this list are used to aid in raster file smoothing/data filtering and in effectively plotting solutions.
 
-## 1. massBalanceOOP.py
+## 1. massBalanceDriver.py
 This is the primary file and driver
 
 * Initialized glaciers: selecting calculation parameters and defining appropriate raster files
@@ -39,3 +39,7 @@ This code contains two smoothing functions for raster files / arrays:
 This code is simply for producing data plots
 * The code plots mass balance per elevation bin, with elevation bin area plotted on the left
 NOTE: Plots are saved into a local '/Figures' folder. Add this folder or remove this section of the code to run
+
+## 5. emergenceFunction.py
+This code is for the emergence calculation at each pixel.
+This is taken and adapted from the code written by David Rounce found on Github at drounce/Rounce2018JGR
