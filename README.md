@@ -14,6 +14,7 @@ This is the primary file and driver of the MB calculation
   - Decisions to show or skip various raster files and calculated values
   - Decisions on using smoothed raster files vs raw data (and decision on smoothing filter type and parameters)
   - Decision on altitudinally resolving using total mass balance or climatic mass balance (it does not do both at once)
+* Images are saved into a '/Figures' folder and PDFs containing all relevant information are saved into a '/PDFs' folder
 
 
 ## 2. glacierClass.py
@@ -54,3 +55,7 @@ Basic code for plotting the velocity of a glacier without running other calculat
 Basic code for opening and viewing saved figures
 Code uses a GUI to select the saved figures to open
 Figures are the saved files from the most recent time the main.py file was run for any particular glacier
+
+## 8. viewMB_pdf.py
+Basic code for opening and viewing saved PDFs
+Code uses a GUI to select the saved PDFs to open, and opens them as Google Chrome tabs
