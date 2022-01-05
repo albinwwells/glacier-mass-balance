@@ -15,6 +15,7 @@ This is the primary file and driver of the MB calculation
   - Decisions on using smoothed raster files vs raw data (and decision on smoothing filter type and parameters)
   - Decision on altitudinally resolving using total mass balance or climatic mass balance (it does not do both at once)
 * Images are saved into a '/Figures' folder and PDFs containing all relevant information are saved into a '/PDFs' folder
+  - These folders must exist for the code to run, or these parts of the code must be excluded
 
 
 ## 2. glacierClass.py
@@ -25,6 +26,7 @@ This code defines the glacier class
   - Coordinate system *reprojections*
   - Raster pixel size resolution *resampling*
   - Raster file extent *clipping*
+  - Raster file *clipping* with a shapefile
   - Raster file *hole-filling*
   - Raster file *smoothing*
   - Pixel-by-pixel *total mass balance calculation*
@@ -49,7 +51,7 @@ This code is for the emergence calculation at each pixel
 This is taken and adapted from the code written by David Rounce found on Github at drounce/Rounce2018JGR
 
 ## 6. velocityPlots.py
-Basic code for plotting the velocity of a glacier without running other calculations
+Basic code for plotting the velocity of a glacier without running other calculations. This file works independently from the others
 
 ## 7. viewMBFigure.py
 Basic code for opening and viewing saved figures
