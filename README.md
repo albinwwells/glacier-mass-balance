@@ -3,19 +3,18 @@
 # Overview
 The following .py files are used to conduct a total mass balance and climate mass balance for any given glacier. Additionally, an altitudinally-resolved method for estimating mass balance is show. Together, these files are used to apply appropriate raster file geoprocessing and calculations. The last two files in this list are used to aid in raster file smoothing/data filtering and in effectively plotting solutions.
 
-## 1. main.py
+## 1. main_vel_comparison.py
 This is the primary file and driver of the MB calculation
 
 * Initialized glaciers: selecting calculation parameters and defining appropriate raster files
+  - Choose any glacier RGI Region 1 or 2
   - Use glacierDatabase.py to define files for each glacier
-  - GUI on main.py will draw from glacierDatabase.py for glacier files and features
+  - GUI on main_vel_comparison.py will draw from regional files or glacierDatabase.py for specific glacier files and features
 * Calling methods to manipulate and calculate based on selected glacier
+* Compare results using different velocity products (optional)
 * Visualization and calculation options are offered throughout to show or check certain files and processes. For example:
-  - Decisions to show or skip various raster files and calculated values
-  - Decisions on using smoothed raster files vs raw data (and decision on smoothing filter type and parameters)
-  - Decision on altitudinally resolving using total mass balance or climatic mass balance (it does not do both at once)
 * Images are saved into a '/Figures' folder and PDFs containing all relevant information are saved into a '/PDFs' folder
-  - These folders must exist for the code to run, or these parts of the code must be excluded
+  - These folders are created to store saved files if they do not exist
 
 
 ## 2. glacierClass.py
@@ -52,12 +51,3 @@ This is taken and adapted from the code written by David Rounce found on Github 
 
 ## 6. velocityPlots.py
 Basic code for plotting the velocity of a glacier without running other calculations. This file works independently from the others
-
-## 7. viewMBFigure.py
-Basic code for opening and viewing saved figures
-Code uses a GUI to select the saved figures to open
-Figures are the saved files from the most recent time the main.py file was run for any particular glacier
-
-## 8. viewMB_pdf.py
-Basic code for opening and viewing saved PDFs
-Code uses a GUI to select the saved PDFs to open, and opens them as Google Chrome tabs
