@@ -7,7 +7,7 @@ The following .py files are used to conduct a total mass balance and climate mas
 This is the primary file and driver of the MB calculation
 
 * Initialized glaciers: selecting calculation parameters and defining appropriate raster files
-  - Choose any glacier RGI Region 1 or 2
+  - Choose any glacier RGI Region 1 or 2 -- contact me and I can share dataset files / folders
   - Use glacierDatabase.py to define files for each glacier
   - GUI on main_vel_comparison.py will draw from regional files or glacierDatabase.py for specific glacier files and features
 * Calling methods to manipulate and calculate based on selected glacier
