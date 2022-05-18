@@ -132,7 +132,7 @@ def dynamicSmoothing(z, window_weight, pixel_size, f):
 
                 # Gaussian Filter Params
                 truncate = 3
-                st_dev = (half_size - 0.5) / truncate           # filter st.dev depends on desired window size at a pixel
+                st_dev = (half_size - 0.5) / truncate          # filter st.dev depends on desired window size at a pixel
                 smooth_array = scipy.ndimage.filters.gaussian_filter(pixel_window, st_dev, truncate=truncate)
                 smooth_file[r, c] = smooth_array[half_size, half_size]      # select the center value as the smoothed value
             else:

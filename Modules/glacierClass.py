@@ -11,12 +11,15 @@ from pyproj import transform
 import fiona
 import pandas
 import geopandas as gpd
+import richdem as rd
+from osgeo import gdal
 import numpy as np
 from scipy import stats
 import math
 from .smoothingFunctions import sgolay2d, gaussianFilter
 import warnings
 import os
+from Modules.hidePrints import HiddenPrints
 
 class glacier:
     #glacier represents a glacier with at least a DEM, ice thickness, and change in ice thickness raster file
@@ -331,6 +334,7 @@ class fullGlacier(glacier):
         vyArray = rasterio.open(self.vy[:-4] + '_clip.tif').read(1)
         outlineFile = rasterio.open(self.name + 'Outline.tif').read(1)
         fileList = [demArray, hArray, dhdtArray, vxArray, vyArray]
+        fileList_str = ['(demArray)', '(hArray)', '(dhdtArray)', '(vxArray)', '(vyArray)']
         i = 0
         for file in fileList:
             i = i + 1
@@ -339,8 +343,9 @@ class fullGlacier(glacier):
             # threshold of 0.5 sq km
             threshold = 500000
             if missingPixels * self.res * self.res > threshold:
-                warnings.warn('\nToo many missing pixels in data #' + str(i) + '\nTotal missing area (sq. km): ' +
-                              str(missingPixels * self.res * self.res / 1000000) + \
+                warnings.warn('\nToo many missing pixels in data #' + str(i) + fileList_str[i - 1] +
+                              '\nTotal missing area (sq. km): ' +
+                              str(missingPixels * self.res * self.res / 1000000) +
                               '\nTotal missing pixels: ' + str(missingPixels))
 
     def fillVel(self):
@@ -576,6 +581,7 @@ class fullGlacier(glacier):
         return destination
 
     def MillanVelocityRGI1_2(self):
+        # create a mosaic if glacier falls between/overlaps RGI1 and 2 raster files
         # obtain northing and easting values from shapefile
         zips = gpd.read_file(self.shape)
         zips = zips.to_crs('epsg:4326')
@@ -750,6 +756,68 @@ class fullGlacier(glacier):
             data_var = None
             data_coords = None
             return data, data_var, data_coords
+
+    def glacierAttributes(self, dem_rast, attrFormat):
+        # return desired attribute (slopeFormat is 'slope_degree' or 'slope_percentage', 'slope_riserun', 'aspect')
+        # https://richdem.readthedocs.io/en/latest/python_api.html#richdem.rdarray
+        # gdal.DEMProcessing('slope.tif', dem_rast, 'slope', slopeFormat=slopeFormat)
+        # with rasterio.open('slope.tif') as dataset:
+        #     slope = dataset.read(1)
+        #     slope[slope == -9999.0] = 0
+        dem_array = rd.LoadGDAL(dem_rast)
+        attr_array = rd.TerrainAttribute(dem_array, attrib=attrFormat)
+        # px, py = np.gradient(rasterio.open(self.dem).read(1), self.res)
+        # slope1 = np.sqrt(px ** 2 + py ** 2)
+        return attr_array
+
+
+    def velAspectCorrection(self, dem_aspect, vel_x, vel_y, threshold):
+        # replace velocities that go against the aspect ('uphill') with 0
+        # first, find the aspect based on the velocity (save this in vel_aspect)
+        vel_aspect = np.zeros_like(vel_x)
+        for i in range(len(vel_aspect)):
+            for j in range(len(vel_aspect[0])):
+                pixel_deg = math.atan2(vel_y[i][j], vel_x[i][j]) * 180 / math.pi
+                if pixel_deg >= 0 and pixel_deg <= 90:
+                    pixel_aspect = 90 - pixel_deg
+                elif pixel_deg < 0:
+                    pixel_aspect = abs(pixel_deg) + 90
+                elif pixel_deg > 90:
+                    pixel_aspect = 450 - pixel_deg
+                vel_aspect[i][j] = pixel_aspect
+        # now, compare and replace values where aspect differs beyond the threshold
+        vel_x_cor = np.zeros_like(vel_x)
+        vel_y_cor = np.zeros_like(vel_y)
+        for i in range(len(dem_aspect)):
+            for j in range(len(dem_aspect[0])):
+                dem_aspect_high = dem_aspect[i][j] + 360
+                dem_aspect_low = dem_aspect[i][j] - 360
+                # find the locations where we are within the threshold
+                if np.array([abs(dem_aspect[i][j] - vel_aspect[i][j]) <= threshold,
+                             abs(dem_aspect_high - vel_aspect[i][j]) <= threshold,
+                             abs(dem_aspect_low - vel_aspect[i][j]) <= threshold]).any():
+                    vel_x_cor[i][j] = vel_x[i][j]
+                    vel_y_cor[i][j] = vel_y[i][j]
+                else:       # if we are beyond the threshold, we return 0
+                    vel_x_cor[i][j] = vel_x[i][j]*0.0001
+                    vel_y_cor[i][j] = vel_y[i][j]*0.0001
+        return vel_x_cor, vel_y_cor
+
+    def velAspectDirection(self, dem_aspect, vel):
+        # use velocity magnitudes only in conjuction with aspect for the direction
+        # compare and replace values where aspect differs beyond the threshold
+        vel_x_cor = np.zeros_like(vel)
+        vel_y_cor = np.zeros_like(vel)
+        for i in range(len(dem_aspect)):
+            for j in range(len(dem_aspect[0])):
+                # convert from aspect and vel magnitude to vx and vy
+                vel_x_cor[i][j] = np.sin(dem_aspect[i][j] * math.pi / 180) * vel[i][j]  # this is our new vel_x
+                vel_y_cor[i][j] = np.cos(dem_aspect[i][j] * math.pi / 180) * vel[i][j]  # this is our new vel_y
+        return vel_x_cor, vel_y_cor
+
+
+    def velocityUncertaintyMillan(self):
+        print('yep')
 
 
     ## -------- THESE ARE A WORK IN PROGRESS / ABANDONED ---------

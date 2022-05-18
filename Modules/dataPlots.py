@@ -4,6 +4,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import TwoSlopeNorm
 from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
 import matplotlib.font_manager as fm
+from matplotlib.colors import LinearSegmentedColormap, to_rgb
 import matplotlib.image as img
 from PIL import Image
 
@@ -48,7 +49,7 @@ def elevationBinPlot(xVal1, yVal1, xVal2, yVal2, xLabel1, yLabel1, xLabel2, titl
     plt.show(block=False)
     figName = title1.replace(' ', '_') + '.png'
     fig.savefig('Figures/' + figName)
-    Image.open('Figures/' + figName).show()
+    # Image.open('Figures/' + figName).show()
 
 def elevationBinPlot2(xVal1, labx1, xVal1_2, labx1_2, yVal1, xVal2, yVal2, xLabel1, yLabel1, xLabel2, title1,
                      elevationBinWidth, minVal, buff, alpha):
@@ -96,7 +97,7 @@ def elevationBinPlot2(xVal1, labx1, xVal1_2, labx1_2, yVal1, xVal2, yVal2, xLabe
     plt.show(block=False)
     figName = title1.replace(' ', '_') + '.png'
     fig.savefig('Figures/' + figName)
-    Image.open('Figures/' + figName).show()
+    # Image.open('Figures/' + figName).show()
 
 def elevationBinPlot3Subfigs(x_subp1, x_subp1_lab, x_subp1_2, x_subp1_lab_2, x_subp1_3, x_subp1_lab_3, y_subp1,
                              x2_subp1, y2_subp1, xLabel1, yLabel1, xLabel2, title1, elBinWidth, buff, alpha, title, res,
@@ -242,24 +243,29 @@ def elevationBinPlot3Subfigs(x_subp1, x_subp1_lab, x_subp1_2, x_subp1_lab_2, x_s
     plt.show(block=False)
     figName = title.replace(' ', '_') + '.png'
     fig.savefig('Figures/' + figName)
-    Image.open('Figures/' + figName).show()
+    # Image.open('Figures/' + figName).show()
 
-def plotData(dataVals, cbarTitle, color, plotTitle):
+def plotData(dataVals, cbarTitle, color, plotTitle, cluster=None, quiver=None):
     '''
     Plots a map from input values (array-like)
     :param dataVals: values to be plotted
     :param cbarTitle: title of the colorbar
     :param color: colorbar scale (https://matplotlib.org/stable/tutorials/colors/colormaps.html)
     :param plotTitle: title of the plot
+    :param cluster: number of discrete colorbar clusters. None by default, which has a continuous colorbar
+    :param quiver: for quiver plot of arrows, list with 6 inputs from velPlot function below
     :return:
     '''
     fig = plt.figure()
-    ax = fig.add_subplot(131, label="1")
+    ax = fig.add_subplot(111, label="1")
 
     divnorm = TwoSlopeNorm(vmin=dataVals.min(), vcenter=dataVals.mean(), vmax=dataVals.max())
     dataVals = dataVals.astype(float)
     dataVals[dataVals == 0] = np.nan                                  # to remove 0 values for white background in plot
-    im = ax.imshow(dataVals, cmap=plt.cm.get_cmap(color), norm=divnorm) #check len datavals
+    im = ax.imshow(dataVals, cmap=plt.cm.get_cmap(color, cluster), norm=divnorm) #check len datavals
+    if quiver != None:
+        ax.quiver(quiver[0], quiver[1], quiver[2], quiver[3], quiver[4],
+                   cmap=quiver[5], scale=quiver[6], width=.003)                   # velocity arrows
     divider = make_axes_locatable(ax)
     cax = divider.append_axes('right', size='5%', pad=0.05)
     fig.colorbar(im, cax=cax, label=cbarTitle)
@@ -269,7 +275,7 @@ def plotData(dataVals, cbarTitle, color, plotTitle):
     plt.show(block=False)
     figName = plotTitle.replace(' ', '_') + '.png'
     fig.savefig('Figures/' + figName)
-    Image.open('Figures/' + figName).show()
+    # Image.open('Figures/' + figName).show()
 
 def plotData3(dataVals1, cbarTitle1, color1, title1, dataVals2, cbarTitle2, color2, title2,
               dataVals3, cbarTitle3, color3, title3, plotTitle, res, quiver2=None, quiver3=None):
@@ -328,7 +334,7 @@ def plotData3(dataVals1, cbarTitle1, color1, title1, dataVals2, cbarTitle2, colo
     plt.show(block=False)
     figName = plotTitle.replace(' ', '_') + '.png'
     fig.savefig('Figures/' + figName)
-    Image.open('Figures/' + figName).show()
+    # Image.open('Figures/' + figName).show()
 
 def plotData6(dataVals1, cbarTitle1, color1, title1, dataVals2, cbarTitle2, color2, title2,
               dataVals3, cbarTitle3, color3, title3, dataVals4, cbarTitle4, color4, title4,
@@ -468,7 +474,7 @@ def plotDataPoints(dataVals1, cbarTitle1, color1, dataVals2, cbarTitle2, color2,
     plt.show(block=False)
     figName = plotTitle.replace(' ', '_') + '.png'
     fig.savefig('Figures/' + figName)
-    Image.open('Figures/' + figName).show()
+    # Image.open('Figures/' + figName).show()
 
 def velPlot(vx, vy, v_tot, area, threshold):
     '''
@@ -639,4 +645,4 @@ def elevationBinPlot3data3Subfigs(x_subp1, x_subp1_lab, x_subp1_2, x_subp1_lab_2
     plt.show(block=False)
     figName = title.replace(' ', '_') + '.png'
     fig.savefig('Figures/' + figName)
-    Image.open('Figures/' + figName).show()
+    # Image.open('Figures/' + figName).show()
