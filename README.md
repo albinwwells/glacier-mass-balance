@@ -1,4 +1,5 @@
 # glacier-mass-balance
+A framework to calculate and plot various metrics regarding glacier mass balance
 
 # Overview
 The following .py files are used to conduct a total mass balance and climate mass balance for any given glacier. Additionally, an altitudinally-resolved method for estimating mass balance is show. Together, these files are used to apply appropriate raster file geoprocessing and calculations. The last two files in this list are used to aid in raster file smoothing/data filtering and in effectively plotting solutions.
